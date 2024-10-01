@@ -3,40 +3,49 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:Checkers"
         xmlns:converter="clr-namespace:Checkers.Converter"
+        xmlns:behav="clr-namespace:Checkers.Behaviours"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        SizeChanged="Window_SizeChanged">
     <Window.Resources>
         <converter:AlternateColorConverter x:Key="AlternateColorConv"/>
         <converter:CheckerColor x:Key="CheckerColorConv"/>
     </Window.Resources>
-    <Grid>
-        <!-- Add the checkers board -->
-        <ItemsControl ItemsSource="{Binding Board}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="8" Rows="8"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="3*"/>
-                            <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>
-                        <Rectangle Grid.ColumnSpan="3" Grid.RowSpan="3" Fill="{Binding Converter={StaticResource AlternateColorConv}}"/>
-                        <Ellipse Grid.Column="1" Grid.Row="1" Fill="{Binding Converter={StaticResource CheckerColorConv}}"/>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </Grid>
+    <Canvas>
+        <Grid Canvas.Left="{Binding CanvasRect.X}" Canvas.Top="{Binding CanvasRect.Y}" Width="{Binding CanvasRect.Width}" Height="{Binding CanvasRect.Height}">
+            <!-- Add the checkers board -->
+            <ItemsControl ItemsSource="{Binding Board}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="8" Rows="8"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="3*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <Rectangle Grid.ColumnSpan="3" Grid.RowSpan="3" Fill="{Binding Converter={StaticResource AlternateColorConv}, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Ellipse Grid.Column="1" Grid.Row="1" Fill="{Binding Converter={StaticResource CheckerColorConv}, UpdateSourceTrigger=PropertyChanged}">
+                                <i:Interaction.Behaviors>
+                                    <behav:CheckerBehaviour/>
+                                </i:Interaction.Behaviors>
+                            </Ellipse>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </Canvas>
 </Window>

@@ -10,13 +10,16 @@ public class AlternateColorConverter : IValueConverter
     int index = 0;
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        index++;
-        if ((index > 8))
+        if ((index > 7))
         {
-            index = 1;
+            index = 0;
             isGray = !isGray;
         }
-        Brush returnBrush = isGray ? Brushes.Gray : Brushes.Brown;
+        index++;
+        bool glow = (char)value == 'g';
+        Brush returnBrush = glow
+            ? isGray ? Brushes.LightGray : Brushes.Beige
+            : isGray ? Brushes.Gray : Brushes.Brown;
         isGray = !isGray;
         return returnBrush;
     }

@@ -1,8 +1,5 @@
 ﻿using Checkers.ViewModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Media;
 
 namespace Checkers;
 /// <summary>
@@ -19,13 +16,10 @@ public partial class MainWindow : Window
 
     private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        Grid grid = (Grid)sender;
-        DependencyObject dataTemplate = VisualTreeHelper.GetParent(grid);
-        DependencyObject uniformGrid = VisualTreeHelper.GetParent(dataTemplate);
-
-        if (uniformGrid is UniformGrid parentGrid)
-        {
-            int index = parentGrid.Children.IndexOf((UIElement)dataTemplate);
-        }
+        _viewModel.Grid_MouseLeftButtonDown(sender, e);
+    }
+    private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        _viewModel.Window_SizeChanged(ActualWidth, ActualHeight - SystemParameters.CaptionHeight);
     }
 }
