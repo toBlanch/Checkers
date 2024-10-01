@@ -21,7 +21,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid MouseLeftButtonDown="Rectangle_MouseLeftButtonDown">
+                    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="3*"/>
