@@ -125,7 +125,7 @@ class MainViewModel : CanvasRectBase
             index = GetBoardIndex(row + rowShift, column + columnShift);
             if (canCurrentPlayerTakePiece && calculateAttackingMoves)
             {
-                if (Board[index] == opposingCheckerType)
+                if (char.ToLower(Board[index]) == opposingCheckerType)
                 {
                     (row, column) = GetRowCoordinates(index);
                     if (AreRowAndColumnValid(row + rowShift, column + columnShift))
@@ -163,7 +163,7 @@ class MainViewModel : CanvasRectBase
         List<int> moves = GetMoves(index, Board[index], false);
         foreach (int move in moves)
         {
-            if (Board[move] == opposingCheckerType)
+            if (char.ToLower(Board[move]) == opposingCheckerType)
             {
                 (int row, int column) = GetRowCoordinates(index);
                 (int moveRow, int moveColumn) = GetRowCoordinates(move);
