@@ -1,5 +1,6 @@
 ﻿using CanvasRect;
 using Checkers.Behaviours;
+using Checkers.Model;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -12,20 +13,48 @@ namespace Checkers.ViewModel;
 class MainViewModel : CanvasRectBase
 {
     public static event ColorChangedEventhandler? ColorChanged;
-    public char[] Board { get; } = new char[64];
-    int selectedTileIndex = -1;
-    bool redPlayerTurn = true;
-    bool canCurrentPlayerTakePiece = false;
-    char intendedCheckerType => redPlayerTurn
+    private readonly Main _main = new();
+    public char[] Board
+    {
+        get => _main.Board;
+        set => _main.Board = value;
+    }
+    public int SelectedTileIndex
+    {
+        get => _main.SelectedTileIndex;
+        set => _main.SelectedTileIndex = value;
+    }
+    public bool RedPlayerTurn
+    {
+        get => _main.RedPlayerTurn;
+        set => _main.RedPlayerTurn = value;
+    }
+    public bool CurrentPlayerCanTakePiece
+    {
+        get => _main.CurrentPlayerCanTakePiece;
+        set => _main.CurrentPlayerCanTakePiece = value;
+    }
+    char IntendedCheckerType => RedPlayerTurn
                                 ? 'r'
                                 : 'b';
-    char opposingCheckerType => redPlayerTurn
+    char OpposingCheckerType => RedPlayerTurn
                                 ? 'b'
                                 : 'r';
 
 
     public MainViewModel()
     {
+        //using TcpClient client = new();
+        //string hostname = "127.0.0.1";
+        //client.Connect(hostname, 13000);
+        //NetworkStream stream = client.GetStream();
+        //string message = "Hello World\r\n";
+        //Console.WriteLine(message);
+        //using StreamReader reader = new(stream, Encoding.UTF8);
+        //byte[] bytes = Encoding.UTF8.GetBytes(message);
+        //stream.Write(bytes, 0, bytes.Length);
+        //Console.WriteLine(reader.ReadToEnd());
+
         Width = 800;
         Height = 600;
         for (int i = 0; i < 64; i++)
@@ -70,15 +99,15 @@ class MainViewModel : CanvasRectBase
             case 'g':
                 MovePiece(index);
                 RemoveHighlightedTiles();
-                if (canCurrentPlayerTakePiece && CanCheckerTakeAnyPiece(index))
+                if (CurrentPlayerCanTakePiece && CanCheckerTakeAnyPiece(index))
                 {
-                    selectedTileIndex = index;
+                    SelectedTileIndex = index;
                     HighlightPossibleMoves(index);
                 }
                 else
                 {
-                    redPlayerTurn = !redPlayerTurn;
-                    canCurrentPlayerTakePiece = CanCurrentPlayerTakePiece();
+                    RedPlayerTurn = !RedPlayerTurn;
+                    CurrentPlayerCanTakePiece = CanCurrentPlayerTakePiece();
                 }
                 break;
             default:
@@ -123,9 +152,9 @@ class MainViewModel : CanvasRectBase
     {
         if (TryShiftCoordinates(index, rowShift, columnShift, out index))
         {
-            if (canCurrentPlayerTakePiece && calculateAttackingMoves)
+            if (CurrentPlayerCanTakePiece && calculateAttackingMoves)
             {
-                if (char.ToLower(Board[index]) == opposingCheckerType)
+                if (char.ToLower(Board[index]) == OpposingCheckerType)
                 {
                     if (TryShiftCoordinates(index, rowShift, columnShift, out index))
                     {
@@ -156,7 +185,7 @@ class MainViewModel : CanvasRectBase
     {
         for (int i = 0; i < Board.Length; i++)
         {
-            if (char.ToLower(Board[i]) == intendedCheckerType && CanCheckerTakeAnyPiece(i))
+            if (char.ToLower(Board[i]) == IntendedCheckerType && CanCheckerTakeAnyPiece(i))
             {
                 return true;
             }
@@ -168,7 +197,7 @@ class MainViewModel : CanvasRectBase
         List<int> moves = GetMoves(index, Board[index], false);
         foreach (int move in moves)
         {
-            if (char.ToLower(Board[move]) == opposingCheckerType)
+            if (char.ToLower(Board[move]) == OpposingCheckerType)
             {
                 (int row, int column) = GetTileCoordinates(index);
                 (int moveRow, int moveColumn) = GetTileCoordinates(move);
@@ -197,9 +226,9 @@ class MainViewModel : CanvasRectBase
     private void HighlightPossibleMoves(int index)
     {
         char checkerType = Board[index];
-        if (char.ToLower(checkerType) == intendedCheckerType)
+        if (char.ToLower(checkerType) == IntendedCheckerType)
         {
-            selectedTileIndex = index;
+            SelectedTileIndex = index;
             List<int> moves = GetMoves(index, checkerType, true);
             moves.ForEach(move =>
             {
@@ -212,7 +241,7 @@ class MainViewModel : CanvasRectBase
     }
     private void MovePiece(int finalTileIndex)
     {
-        (int row, int column) = GetTileCoordinates(selectedTileIndex);
+        (int row, int column) = GetTileCoordinates(SelectedTileIndex);
         (int newRow, int newColumn) = GetTileCoordinates(finalTileIndex);
         int horizontalIncrement = row < newRow
                                     ? 1
@@ -221,14 +250,14 @@ class MainViewModel : CanvasRectBase
                                     ? 1
                                     : -1;
 
-        while (selectedTileIndex != finalTileIndex)
+        while (SelectedTileIndex != finalTileIndex)
         {
-            TryShiftCoordinates(selectedTileIndex, horizontalIncrement, verticalIncrement, out int tileToMoveToIndex);
+            TryShiftCoordinates(SelectedTileIndex, horizontalIncrement, verticalIncrement, out int tileToMoveToIndex);
 
-            UpdateBoardTile(tileToMoveToIndex, Board[selectedTileIndex]);
-            UpdateBoardTile(selectedTileIndex, ' ');
+            UpdateBoardTile(tileToMoveToIndex, Board[SelectedTileIndex]);
+            UpdateBoardTile(SelectedTileIndex, ' ');
 
-            selectedTileIndex = tileToMoveToIndex;
+            SelectedTileIndex = tileToMoveToIndex;
         }
 
         AttemptToCrownChecker(newRow, horizontalIncrement);
@@ -240,7 +269,7 @@ class MainViewModel : CanvasRectBase
         bool hasReachedEnd = row == (isMovingUp ? 0 : 7);
         if (hasReachedEnd)
         {
-            UpdateBoardTile(selectedTileIndex, char.ToUpper(Board[selectedTileIndex]));
+            UpdateBoardTile(SelectedTileIndex, char.ToUpper(Board[SelectedTileIndex]));
         }
     }
 
