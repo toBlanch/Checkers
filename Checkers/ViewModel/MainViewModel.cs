@@ -1,6 +1,7 @@
 ﻿using CanvasRect;
 using Checkers.Behaviours;
 using Checkers.Model;
+using Checkers.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -41,9 +42,11 @@ class MainViewModel : CanvasRectBase
                                 ? 'b'
                                 : 'r';
 
-
+    private readonly Server _server;
     public MainViewModel()
     {
+        _server = new();
+        _server.ConnectToServer();
         //using TcpClient client = new();
         //string hostname = "127.0.0.1";
         //client.Connect(hostname, 13000);
