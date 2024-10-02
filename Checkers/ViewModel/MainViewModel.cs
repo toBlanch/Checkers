@@ -70,7 +70,7 @@ class MainViewModel : CanvasRectBase
             case 'g':
                 MovePiece(index);
                 RemoveHighlightedTiles();
-                if (canCurrentPlayerTakePiece && CanCheckerTakePiece(index))
+                if (canCurrentPlayerTakePiece && CanCheckerTakeAnyPiece(index))
                 {
                     selectedTileIndex = index;
                     HighlightPossibleMoves(index);
@@ -86,11 +86,11 @@ class MainViewModel : CanvasRectBase
                 break;
         }
     }
-    public int GetBoardIndex(int row, int column)
+    public int GetTileIndex(int row, int column)
     {
         return row * 8 + column;
     }
-    public (int, int) GetRowCoordinates(int index)
+    public (int, int) GetTileCoordinates(int index)
     {
         return (index / 8, index % 8);
     }
@@ -102,35 +102,33 @@ class MainViewModel : CanvasRectBase
     }
     private List<int> GetMoves(int index, char checkerType, bool calculateAttackingMoves)
     {
-        (bool canMoveUp, bool canMoveDown) = GetDirectionsCheckerCanMove(checkerType);
         List<int> moves = new();
 
+        (bool canMoveUp, bool canMoveDown) = GetDirectionsCheckerCanMove(checkerType);
         if (canMoveUp)
-        {
-            AttemptToAddMove(moves, index, -1, -1, calculateAttackingMoves);
-            AttemptToAddMove(moves, index, -1, 1, calculateAttackingMoves);
-        }
+            AttemptToAddMoveRows(index, calculateAttackingMoves, moves, -1);
         if (canMoveDown)
-        {
-            AttemptToAddMove(moves, index, 1, -1, calculateAttackingMoves);
-            AttemptToAddMove(moves, index, 1, 1, calculateAttackingMoves);
-        }
+            AttemptToAddMoveRows(index, calculateAttackingMoves, moves, 1);
+
         return moves;
     }
+
+    private void AttemptToAddMoveRows(int index, bool calculateAttackingMoves, List<int> moves, int rowShift)
+    {
+        AttemptToAddMove(moves, index, rowShift, -1, calculateAttackingMoves);
+        AttemptToAddMove(moves, index, rowShift, 1, calculateAttackingMoves);
+    }
+
     private void AttemptToAddMove(List<int> moves, int index, int rowShift, int columnShift, bool calculateAttackingMoves)
     {
-        (int row, int column) = GetRowCoordinates(index);
-        if (AreRowAndColumnValid(row + rowShift, column + columnShift))
+        if (TryShiftCoordinates(index, rowShift, columnShift, out index))
         {
-            index = GetBoardIndex(row + rowShift, column + columnShift);
             if (canCurrentPlayerTakePiece && calculateAttackingMoves)
             {
                 if (char.ToLower(Board[index]) == opposingCheckerType)
                 {
-                    (row, column) = GetRowCoordinates(index);
-                    if (AreRowAndColumnValid(row + rowShift, column + columnShift))
+                    if (TryShiftCoordinates(index, rowShift, columnShift, out index))
                     {
-                        index = GetBoardIndex(row + rowShift, column + columnShift);
                         moves.Add(index);
                     }
                 }
@@ -139,7 +137,18 @@ class MainViewModel : CanvasRectBase
             moves.Add(index);
         }
     }
-    private bool AreRowAndColumnValid(int row, int column)
+    private bool TryShiftCoordinates(int index, int rowShift, int columnShift, out int newIndex)
+    {
+        (int row, int column) = GetTileCoordinates(index);
+        if (AreRowAndColumnInBounds(row + rowShift, column + columnShift))
+        {
+            newIndex = GetTileIndex(row + rowShift, column + columnShift);
+            return true;
+        }
+        newIndex = -1;
+        return false;
+    }
+    private bool AreRowAndColumnInBounds(int row, int column)
     {
         return row >= 0 && row < 8 && column >= 0 && column < 8;
     }
@@ -147,9 +156,27 @@ class MainViewModel : CanvasRectBase
     {
         for (int i = 0; i < Board.Length; i++)
         {
-            if (char.ToLower(Board[i]) == intendedCheckerType)
+            if (char.ToLower(Board[i]) == intendedCheckerType && CanCheckerTakeAnyPiece(i))
             {
-                if (CanCheckerTakePiece(i))
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool CanCheckerTakeAnyPiece(int index)
+    {
+        List<int> moves = GetMoves(index, Board[index], false);
+        foreach (int move in moves)
+        {
+            if (char.ToLower(Board[move]) == opposingCheckerType)
+            {
+                (int row, int column) = GetTileCoordinates(index);
+                (int moveRow, int moveColumn) = GetTileCoordinates(move);
+                int columnShift = moveColumn - column;
+                int rowShift = moveRow - row;
+
+                bool inBounds = TryShiftCoordinates(move, rowShift, columnShift, out int newIndex);
+                if (inBounds && Board[newIndex] == ' ')
                 {
                     return true;
                 }
@@ -157,30 +184,6 @@ class MainViewModel : CanvasRectBase
         }
         return false;
     }
-
-    private bool CanCheckerTakePiece(int index)
-    {
-        List<int> moves = GetMoves(index, Board[index], false);
-        foreach (int move in moves)
-        {
-            if (char.ToLower(Board[move]) == opposingCheckerType)
-            {
-                (int row, int column) = GetRowCoordinates(index);
-                (int moveRow, int moveColumn) = GetRowCoordinates(move);
-                int columnShift = moveColumn - column;
-                int rowShift = moveRow - row;
-                if (AreRowAndColumnValid(moveRow + rowShift, moveColumn + columnShift))
-                {
-                    if (Board[GetBoardIndex(moveRow + rowShift, moveColumn + columnShift)] == ' ')
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     private void RemoveHighlightedTiles()
     {
         for (int i = 0; i < Board.Length; i++)
@@ -197,19 +200,20 @@ class MainViewModel : CanvasRectBase
         if (char.ToLower(checkerType) == intendedCheckerType)
         {
             selectedTileIndex = index;
-            (int row, int column) = GetRowCoordinates(selectedTileIndex);
-
             List<int> moves = GetMoves(index, checkerType, true);
-            foreach (int move in moves)
+            moves.ForEach(move =>
             {
-                AttemptToHighlightTile(move);
-            }
+                if (Board[move] is ' ' or 'G')
+                {
+                    UpdateBoardTile(move, 'G');
+                }
+            });
         }
     }
     private void MovePiece(int finalTileIndex)
     {
-        (int row, int column) = GetRowCoordinates(selectedTileIndex);
-        (int newRow, int newColumn) = GetRowCoordinates(finalTileIndex);
+        (int row, int column) = GetTileCoordinates(selectedTileIndex);
+        (int newRow, int newColumn) = GetTileCoordinates(finalTileIndex);
         int horizontalIncrement = row < newRow
                                     ? 1
                                     : -1;
@@ -219,15 +223,19 @@ class MainViewModel : CanvasRectBase
 
         while (selectedTileIndex != finalTileIndex)
         {
-            int tileToMoveToIndex = GetBoardIndex(row + horizontalIncrement, column + verticalIncrement);
+            TryShiftCoordinates(selectedTileIndex, horizontalIncrement, verticalIncrement, out int tileToMoveToIndex);
 
             UpdateBoardTile(tileToMoveToIndex, Board[selectedTileIndex]);
             UpdateBoardTile(selectedTileIndex, ' ');
 
             selectedTileIndex = tileToMoveToIndex;
-            (row, column) = GetRowCoordinates(selectedTileIndex);
         }
 
+        AttemptToCrownChecker(newRow, horizontalIncrement);
+    }
+
+    private void AttemptToCrownChecker(int row, int horizontalIncrement)
+    {
         bool isMovingUp = horizontalIncrement < 0;
         bool hasReachedEnd = row == (isMovingUp ? 0 : 7);
         if (hasReachedEnd)
@@ -235,19 +243,7 @@ class MainViewModel : CanvasRectBase
             UpdateBoardTile(selectedTileIndex, char.ToUpper(Board[selectedTileIndex]));
         }
     }
-    internal bool AttemptToHighlightTile(int row, int column)
-    {
-        return AttemptToHighlightTile(GetBoardIndex(row, column));
-    }
-    internal bool AttemptToHighlightTile(int index)
-    {
-        if (Board[index] is ' ' or 'G')
-        {
-            UpdateBoardTile(index, 'G');
-            return true;
-        }
-        return intendedCheckerType == Board[index];
-    }
+
     internal void UpdateBoardTile(int index, char value)
     {
         Board[index] = value;
