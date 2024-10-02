@@ -16,10 +16,7 @@ public class AlternateColorConverter : IValueConverter
             isGray = !isGray;
         }
         index++;
-        bool glow = (char)value == 'g';
-        Brush returnBrush = glow
-            ? isGray ? Brushes.LightGray : Brushes.Beige
-            : isGray ? Brushes.Gray : Brushes.Brown;
+        Brush returnBrush = isGray ? Brushes.Gray : Brushes.Brown;
         isGray = !isGray;
         return returnBrush;
     }

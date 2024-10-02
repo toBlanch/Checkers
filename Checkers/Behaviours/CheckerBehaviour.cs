@@ -6,17 +6,6 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace Checkers.Behaviours;
-public class UpdateCheckerColorEventArgs
-{
-    public char checkerType;
-    public int index;
-
-    public UpdateCheckerColorEventArgs(char item, int index)
-    {
-        this.checkerType = item;
-        this.index = index;
-    }
-}
 
 public delegate void ColorChangedEventhandler(object self, UpdateCheckerColorEventArgs e);
 internal class CheckerBehaviour : Behavior<Ellipse>

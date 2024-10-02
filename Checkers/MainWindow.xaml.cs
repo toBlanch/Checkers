@@ -20,6 +20,7 @@ public partial class MainWindow : Window
     }
     private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        _viewModel.Window_SizeChanged(ActualWidth, ActualHeight - SystemParameters.CaptionHeight);
+        FrameworkElement pnlClient = (this.Content as FrameworkElement)!;
+        _viewModel.Window_SizeChanged(pnlClient.ActualWidth, pnlClient.ActualHeight);
     }
 }
