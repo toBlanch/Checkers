@@ -5,7 +5,7 @@ namespace Checkers.Converter;
 
 class CheckerColor : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type? targetType, object? parameter, CultureInfo? culture)
     {
         return value switch
         {

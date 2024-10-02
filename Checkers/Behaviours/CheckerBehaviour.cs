@@ -6,31 +6,31 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace Checkers.Behaviours;
-public class CheckerPieceEventArgs
+public class UpdateCheckerColorEventArgs
 {
-    public char item;
+    public char checkerType;
     public int index;
 
-    public CheckerPieceEventArgs(char item, int index)
+    public UpdateCheckerColorEventArgs(char item, int index)
     {
-        this.item = item;
+        this.checkerType = item;
         this.index = index;
     }
 }
 
-public delegate void ColorChangedEventhandler(object self, CheckerPieceEventArgs e);
+public delegate void ColorChangedEventhandler(object self, UpdateCheckerColorEventArgs e);
 internal class CheckerBehaviour : Behavior<Ellipse>
 {
     protected override void OnAttached()
     {
         base.OnAttached();
-        MainViewModel.ColorChanged += UpdateColor;
+        MainViewModel.ColorChanged += UpdateCheckerColor;
     }
     protected override void OnDetaching()
     {
         base.OnDetaching();
     }
-    public void UpdateColor(object sender, CheckerPieceEventArgs e)
+    public void UpdateCheckerColor(object sender, UpdateCheckerColorEventArgs e)
     {
 
         DependencyObject grid = VisualTreeHelper.GetParent(AssociatedObject);
@@ -42,11 +42,13 @@ internal class CheckerBehaviour : Behavior<Ellipse>
             int index = parentGrid.Children.IndexOf((UIElement)dataTemplate);
             if (index == e.index)
             {
-                AssociatedObject.Fill = e.item switch
+                AssociatedObject.Fill = e.checkerType switch
                 {
                     'b' => Brushes.Black,
+                    'B' => Brushes.Bisque,
                     'r' => Brushes.Red,
-                    'w' => Brushes.White,
+                    'R' => Brushes.DarkRed,
+                    'G' => Brushes.Green,
                     _ => Brushes.Transparent,
                 };
             }
