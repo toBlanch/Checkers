@@ -49,6 +49,11 @@ internal class CheckersBoardViewModel : CanvasRectBase
             RaisePropertyChanged(); //TEMPORARY
         }
     }
+    public int ID
+    {
+        get => _board.ID;
+        set => _board.ID = value;
+    }
 
     public CheckersBoardViewModel()
     {
@@ -77,6 +82,10 @@ internal class CheckersBoardViewModel : CanvasRectBase
     public void UpdateConnectedPlayers(int e)
     {
         ConnectedPlayers = e;
+        if (ID == -1)
+        {
+            ID = ConnectedPlayers - 1;
+        }
     }
 
     internal void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -98,7 +107,10 @@ internal class CheckersBoardViewModel : CanvasRectBase
             case 'b':
             case 'r':
                 RemoveHighlightedTiles();
-                HighlightPossibleMoves(index);
+                if (PlayerCanMovePiece())
+                {
+                    HighlightPossibleMoves(index);
+                }
                 break;
             case 'g':
                 MovePiece(index);
@@ -119,6 +131,12 @@ internal class CheckersBoardViewModel : CanvasRectBase
                 break;
         }
     }
+
+    private bool PlayerCanMovePiece()
+    {
+        return ConnectedPlayers < 2 || ID == 0 && RedPlayerTurn || ID == 1 && !RedPlayerTurn;
+    }
+
     public int GetTileIndex(int row, int column)
     {
         return row * 8 + column;

@@ -6,4 +6,5 @@ internal class CheckersBoard
     public bool RedPlayerTurn = true;
     public bool CurrentPlayerCanTakePiece = false;
     public int ConnectedPlayers = -1;
+    public int ID = -1;
 }

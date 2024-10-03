@@ -9,7 +9,7 @@
         SizeChanged="Window_SizeChanged">
     <Grid>
         <TextBlock Text="{Binding CheckersBoard.ConnectedPlayers}" Foreground="blue"/>
-        <view:CheckersBoard DataContext="{Binding CheckersBoard}"/>
+        <view:CheckersBoardView DataContext="{Binding CheckersBoard}"/>
     </Grid>
 </Window>
 

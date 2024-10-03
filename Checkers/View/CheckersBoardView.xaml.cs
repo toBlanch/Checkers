@@ -5,15 +5,15 @@ namespace Checkers.View;
 /// <summary>
 /// Interaction logic for Board.xaml
 /// </summary>
-public partial class CheckersBoard : UserControl
+public partial class CheckersBoardView : UserControl
 {
-    private readonly CheckersBoardViewModel _viewModel = new();
-    public CheckersBoard()
+    public static event CheckerPieceClickedEventhandler? CheckerPieceClicked;
+    public CheckersBoardView()
     {
         InitializeComponent();
     }
     private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        _viewModel.Grid_MouseLeftButtonDown(sender, e);
+        CheckerPieceClicked?.Invoke(sender, e);
     }
 }

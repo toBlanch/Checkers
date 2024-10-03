@@ -8,7 +8,6 @@ class Server
 {
     readonly TcpClient _client;
     public PacketReader PacketReader;
-    public int ID = 0;
 
     public static event ConnectedPlayersChangedEventhandler? ConnectedPlayersChanged;
     public static event MoveMadeEventhandler? MoveMade;
