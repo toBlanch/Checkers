@@ -46,11 +46,11 @@ class Server
             int.TryParse(PacketReader.ReadMessage().Split(":")[1], out int connectedUsers);
             ConnectedPlayersChanged?.Invoke(connectedUsers);
             break;
-          case 3:
+          case 2:
             string[] moveData = PacketReader.ReadMessage().Split(":");
             ServerMadeMove?.Invoke(new MoveMadeEventArgs(
-                    int.Parse(moveData[1]),
-                    int.Parse(moveData[2]))
+                    int.Parse(moveData[0]),
+                    int.Parse(moveData[1]))
                 );
             break;
           default:

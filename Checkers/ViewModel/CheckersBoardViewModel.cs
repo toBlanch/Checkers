@@ -78,7 +78,15 @@ internal class CheckersBoardViewModel : CanvasRectBase
 
   public void MoveMade(MoveMadeEventArgs e)
   {
-    SelectedTileIndex = e.CheckerInitialIndex;
+    Application.Current.Dispatcher.Invoke(() =>
+    {
+      SelectedTileIndex = e.CheckerInitialIndex;
+      bool moveHasAlreadyHappened = BoardTiles[e.CheckerInitialIndex] == ' ';
+      if (!moveHasAlreadyHappened)
+      {
+        MovePiece(e.CheckerNewIndex);
+      }
+    });
   }
 
   public void UpdateConnectedPlayers(int e)
