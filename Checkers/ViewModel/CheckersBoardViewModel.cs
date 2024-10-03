@@ -59,7 +59,8 @@ internal class CheckersBoardViewModel : CanvasRectBase
 
   public CheckersBoardViewModel()
   {
-    Width = 800;
+    X = 100;
+    Width = 600;
     Height = 600;
 
     for (int i = 0; i < 64; i++)
@@ -80,11 +81,11 @@ internal class CheckersBoardViewModel : CanvasRectBase
   {
     Application.Current.Dispatcher.Invoke(() =>
     {
-      SelectedTileIndex = e.CheckerInitialIndex;
       bool moveHasAlreadyHappened = BoardTiles[e.CheckerInitialIndex] == ' ';
       if (!moveHasAlreadyHappened)
       {
-        MovePiece(e.CheckerNewIndex);
+        SelectedTileIndex = e.CheckerInitialIndex;
+        MoveSelected(e.CheckerNewIndex);
       }
     });
   }
@@ -124,22 +125,27 @@ internal class CheckersBoardViewModel : CanvasRectBase
         break;
       case 'g':
         ClientMadeMove?.Invoke(new(SelectedTileIndex, index));
-        MovePiece(index);
-        RemoveHighlightedTiles();
-        if (CurrentPlayerCanTakePiece && CanCheckerTakeAnyPiece(index))
-        {
-          SelectedTileIndex = index;
-          HighlightPossibleMoves(index);
-        }
-        else
-        {
-          RedPlayerTurn = !RedPlayerTurn;
-          CurrentPlayerCanTakePiece = CanCurrentPlayerTakePiece();
-        }
+        MoveSelected(index);
         break;
       default:
         RemoveHighlightedTiles();
         break;
+    }
+  }
+
+  private void MoveSelected(int index)
+  {
+    MovePiece(index);
+    RemoveHighlightedTiles();
+    if (CurrentPlayerCanTakePiece && CanCheckerTakeAnyPiece(index))
+    {
+      SelectedTileIndex = index;
+      HighlightPossibleMoves(index);
+    }
+    else
+    {
+      RedPlayerTurn = !RedPlayerTurn;
+      CurrentPlayerCanTakePiece = CanCurrentPlayerTakePiece();
     }
   }
 
