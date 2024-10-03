@@ -1,4 +1,4 @@
-﻿namespace Checkers.Behaviours;
+﻿namespace Checkers.Events;
 
 public class UpdateCheckerColorEventArgs(char item, int index)
 {

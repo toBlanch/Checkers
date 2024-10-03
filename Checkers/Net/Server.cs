@@ -1,4 +1,5 @@
 ﻿using Checkers.Net.IO;
+using Checkers.ViewModel;
 using System.Net.Sockets;
 
 namespace Checkers.Net;
@@ -7,8 +8,10 @@ class Server
 {
     readonly TcpClient _client;
     public PacketReader PacketReader;
-    public int connectedUsers = 0;
     public int ID = 0;
+
+    public static event ConnectedPlayersChangedEventhandler? ConnectedPlayersChanged;
+    public static event MoveMadeEventhandler? MoveMade;
 
     public Server()
     {
@@ -41,10 +44,11 @@ class Server
                 switch (opcode)
                 {
                     case 1:
-                        int.TryParse(PacketReader.ReadMessage().Split(":")[1], out connectedUsers);
+                        int.TryParse(PacketReader.ReadMessage().Split(":")[1], out int connectedUsers);
+                        ConnectedPlayersChanged?.Invoke(this, connectedUsers);
                         break;
                     default:
-                        Console.WriteLine("... ah yes?");
+                        Console.WriteLine("No value assigned");
                         break;
                 }
             }

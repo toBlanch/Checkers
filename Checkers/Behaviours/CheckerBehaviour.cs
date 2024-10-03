@@ -1,4 +1,5 @@
-﻿using Checkers.ViewModel;
+﻿using Checkers.Events;
+using Checkers.ViewModel;
 using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Controls.Primitives;

@@ -5,4 +5,6 @@ internal class Main
     public int SelectedTileIndex = -1;
     public bool RedPlayerTurn = true;
     public bool CurrentPlayerCanTakePiece = false;
+
+    public int ConnectedPlayers = -1;
 }

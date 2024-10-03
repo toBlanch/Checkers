@@ -1,5 +1,6 @@
 ﻿using CanvasRect;
 using Checkers.Behaviours;
+using Checkers.Events;
 using Checkers.Model;
 using Checkers.Net;
 using System.Windows;
@@ -11,10 +12,13 @@ using System.Windows.Media;
 namespace Checkers.ViewModel;
 
 
+public delegate void ConnectedPlayersChangedEventhandler(object self, int e);
+public delegate void MoveMadeEventhandler(object self, MoveMadeEventArgs e);
 class MainViewModel : CanvasRectBase
 {
-    public static event ColorChangedEventhandler? ColorChanged;
     private readonly Main _main = new();
+
+    public static event ColorChangedEventhandler? ColorChanged;
     public char[] Board
     {
         get => _main.Board;
@@ -41,22 +45,19 @@ class MainViewModel : CanvasRectBase
     char OpposingCheckerType => RedPlayerTurn
                                 ? 'b'
                                 : 'r';
+    public int ConnectedPlayers
+    {
+        get => _main.ConnectedPlayers;
+        set => _main.ConnectedPlayers = value;
+    }
 
     private readonly Server _server;
     public MainViewModel()
     {
         _server = new();
         _server.ConnectToServer();
-        //using TcpClient client = new();
-        //string hostname = "127.0.0.1";
-        //client.Connect(hostname, 13000);
-        //NetworkStream stream = client.GetStream();
-        //string message = "Hello World\r\n";
-        //Console.WriteLine(message);
-        //using StreamReader reader = new(stream, Encoding.UTF8);
-        //byte[] bytes = Encoding.UTF8.GetBytes(message);
-        //stream.Write(bytes, 0, bytes.Length);
-        //Console.WriteLine(reader.ReadToEnd());
+        Server.ConnectedPlayersChanged += UpdateConnectedPlayers;
+        Server.MoveMade += MoveMade;
 
         Width = 800;
         Height = 600;
@@ -73,6 +74,17 @@ class MainViewModel : CanvasRectBase
                         : ' ');
         }
     }
+
+    private void MoveMade(object self, MoveMadeEventArgs e)
+    {
+        SelectedTileIndex = e.CheckerInitialIndex;
+    }
+
+    private void UpdateConnectedPlayers(object self, int e)
+    {
+        ConnectedPlayers = e;
+    }
+
     public void Window_SizeChanged(double actualWidth, double actualHeight)
     {
         Graphics.window = new Vector(actualWidth, actualHeight); // Updates the window size
