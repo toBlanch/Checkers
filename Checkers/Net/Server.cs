@@ -45,7 +45,7 @@ class Server
                 {
                     case 1:
                         int.TryParse(PacketReader.ReadMessage().Split(":")[1], out int connectedUsers);
-                        ConnectedPlayersChanged?.Invoke(this, connectedUsers);
+                        ConnectedPlayersChanged?.Invoke(connectedUsers);
                         break;
                     default:
                         Console.WriteLine("No value assigned");

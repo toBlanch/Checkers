@@ -1,12 +1,6 @@
 ﻿namespace Checkers.Events;
-public class MoveMadeEventArgs
+public class MoveMadeEventArgs(int checkerInitialIndex, int checkerNewIndex)
 {
-    public int CheckerInitialIndex;
-    public int CheckerNewIndex;
-
-    public MoveMadeEventArgs(int checkerInitialIndex, int checkerNewIndex)
-    {
-        CheckerInitialIndex = checkerInitialIndex;
-        CheckerNewIndex = checkerNewIndex;
-    }
+    public int CheckerInitialIndex = checkerInitialIndex;
+    public int CheckerNewIndex = checkerNewIndex;
 }

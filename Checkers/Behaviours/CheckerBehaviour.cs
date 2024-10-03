@@ -14,7 +14,7 @@ internal class CheckerBehaviour : Behavior<Ellipse>
     protected override void OnAttached()
     {
         base.OnAttached();
-        MainViewModel.ColorChanged += UpdateCheckerColor;
+        CheckersBoardViewModel.ColorChanged += UpdateCheckerColor;
     }
     protected override void OnDetaching()
     {

@@ -14,10 +14,6 @@ public partial class MainWindow : Window
         DataContext = _viewModel;
     }
 
-    private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    {
-        _viewModel.Grid_MouseLeftButtonDown(sender, e);
-    }
     private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         FrameworkElement pnlClient = (this.Content as FrameworkElement)!;
