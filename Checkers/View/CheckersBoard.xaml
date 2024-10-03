@@ -15,6 +15,7 @@
     </UserControl.Resources>
     <Canvas>
         <Grid Canvas.Left="{Binding CanvasRect.X}" Canvas.Top="{Binding CanvasRect.Y}" Width="{Binding CanvasRect.Width}" Height="{Binding CanvasRect.Height}">
+
             <!-- Add the checkers board -->
             <ItemsControl ItemsSource="{Binding BoardTiles}">
                 <ItemsControl.ItemsPanel>

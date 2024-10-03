@@ -43,7 +43,11 @@ internal class CheckersBoardViewModel : CanvasRectBase
     public int ConnectedPlayers
     {
         get => _board.ConnectedPlayers;
-        set => _board.ConnectedPlayers = value;
+        set
+        {
+            _board.ConnectedPlayers = value;
+            RaisePropertyChanged(); //TEMPORARY
+        }
     }
 
     public CheckersBoardViewModel()

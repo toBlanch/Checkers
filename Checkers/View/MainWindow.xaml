@@ -8,6 +8,7 @@
         Title="MainWindow" Height="450" Width="800"
         SizeChanged="Window_SizeChanged">
     <Grid>
+        <TextBlock Text="{Binding CheckersBoard.ConnectedPlayers}" Foreground="blue"/>
         <view:CheckersBoard DataContext="{Binding CheckersBoard}"/>
     </Grid>
 </Window>
