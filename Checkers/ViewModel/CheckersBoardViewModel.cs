@@ -59,9 +59,8 @@ internal class CheckersBoardViewModel : CanvasRectBase
 
   public CheckersBoardViewModel()
   {
-    X = 100;
-    Width = 600;
-    Height = 600;
+    Width = 100;
+    Height = 100;
 
     for (int i = 0; i < 64; i++)
     {

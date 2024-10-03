@@ -27,6 +27,8 @@ class MainViewModel
     CheckersBoardView.CheckerPieceClicked += CheckersBoard.Grid_MouseLeftButtonDown;
     Server.ConnectedPlayersChanged += CheckersBoard.UpdateConnectedPlayers;
     Server.ServerMadeMove += CheckersBoard.MoveMade;
+
+    Graphics.maxRelativeWindow = new(100, 100);
   }
 
   public void Window_SizeChanged(double actualWidth, double actualHeight)
