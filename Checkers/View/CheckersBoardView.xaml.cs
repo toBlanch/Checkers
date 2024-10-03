@@ -7,13 +7,13 @@ namespace Checkers.View;
 /// </summary>
 public partial class CheckersBoardView : UserControl
 {
-    public static event CheckerPieceClickedEventhandler? CheckerPieceClicked;
-    public CheckersBoardView()
-    {
-        InitializeComponent();
-    }
-    private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    {
-        CheckerPieceClicked?.Invoke(sender, e);
-    }
+  public static event CheckerPieceClickedEventhandler? CheckerPieceClicked;
+  public CheckersBoardView()
+  {
+    InitializeComponent();
+  }
+  private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+  {
+    CheckerPieceClicked?.Invoke(sender, e);
+  }
 }
