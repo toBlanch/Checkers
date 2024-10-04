@@ -10,7 +10,7 @@ internal class Program
   private static void Main(string[] args)
   {
     _users = new();
-    _listener = new(IPAddress.Parse("127.0.0.1"), 7891);
+    _listener = new(IPAddress.Parse("127.0.0.1"), 80);
     _listener.Start();
 
     while (true)

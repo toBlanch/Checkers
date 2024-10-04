@@ -24,7 +24,7 @@ class Server
   {
     if (!_client.Connected)
     {
-      _client.Connect("127.0.0.1", 7891);
+      _client.Connect("127.0.0.1", 80);
       PacketReader = new(_client.GetStream());
 
       SendMessage("progress", 0);
